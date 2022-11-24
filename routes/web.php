@@ -1,13 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use AmoCRM\OAuth\OAuthConfigInterface;
 use AmoCRM\OAuth\OAuthServiceInterface;
+use Illuminate\Support\Facades\Route;
 use League\OAuth2\Client\Token\AccessTokenInterface;
+use AmoCRM\OAuth2\Client\Provider\AmoCRM;
 
-// include_once __DIR__ . '/../app/amo/auth.php';
-include_once __DIR__ . '/../app/amo/auth2.php';
-
+include_once __DIR__ . '/../app/amo/auth.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -20,67 +19,67 @@ include_once __DIR__ . '/../app/amo/auth2.php';
 |
  */
 
+Route::get('/app/amo/auth.php', function () {
+    list($clientId, $clientSecret, $redirectUri) = getData();
 
+    $provider = new AmoCRM([
+        'clientId' => $clientId,
+        'clientSecret' => $clientSecret,
+        'redirectUri' => $redirectUri,
+    ]);
+
+    $accessToken = getToken();
+    $ownerDetails = $provider->getResourceOwner($accessToken);
+   
+    return view('after', ['user' => $ownerDetails->getName()]);
+});
 
 Route::get('/', function () {
 
-    list($clientId,$clientSecret,$redirectUri) = getData();
-    echo "clientId = $clientId<br>";
-    echo "clientSecret = $clientSecret<br>";
-    echo "redirectUri = $redirectUri<br>";
+    // list($clientId, $clientSecret, $redirectUri) = getData();
+    // echo "clientId = $clientId<br>";
+    // echo "clientSecret = $clientSecret<br>";
+    // echo "redirectUri = $redirectUri<br>";
 
-    $oAuthConfig = new UserAuth($clientId, $clientSecret, $redirectUri);
-    $baseDomain = 'noriksaroyan.amocrm.ru';
+    // retriveAccessToken();
+    // $oAuthConfig = new UserAuth($clientId, $clientSecret, $redirectUri);
+    
+    // $accessToken = getToken();
+    // echo "get token blabla $accessToken";
 
-    echo "base domain after <br>";
+    // $baseDomain = $accessToken['baseDomain'];
+    // $oAuthService = new UserToken($accessToken, $baseDomain);
 
-    $accessToken = getToken($baseDomain);
+    // $apiClient = new \AmoCRM\Client\AmoCRMApiClient($clientId, $clientSecret, $redirectUri);
 
-    echo "get token <br>";
+    // $apiClient->setAccessToken($accessToken)
+    //     ->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
 
-    $oAuthService = new UserToken($accessToken, $baseDomain);
+    // $state = 0;
 
+    // try {
 
+    //     $mybutton = $apiClient->getOAuthClient()->getOAuthButton(
+    //         [
+    //             'title' => 'Установить интеграцию',
+    //             'compact' => true,
+    //             'class_name' => 'className',
+    //             'color' => 'default',
+    //             'error_callback' => 'handleOauthError',
+    //             'state' => $state,
+    //         ]
+    //     );
+    //     printf("$mybutton");
+    // } catch (\AmoCRM\Exceptions\BadTypeException$e) {
+    //     echo "exception thrown";
+    // }
 
-    echo "apiclient <br>";
-    $apiClient = new \AmoCRM\Client\AmoCRMApiClient('$clientId', '$clientSecret', '$redirectUri');
-
-
-    echo "set access token <br>";
-
-    $apiClient->setAccessToken($accessToken)
-        ->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
-
-
-        echo "try block <br>";
-$state=0;
-
-
-    try {
-
-        $mybutton = $apiClient->getOAuthClient()->getOAuthButton(
-            [
-                'title' => 'Установить интеграцию',
-                'compact' => true,
-                'class_name' => 'className',
-                'color' => 'default',
-                'error_callback' => 'handleOauthError',
-                'state' => $state,
-            ]
-        );
-         printf("$mybutton"); 
-    } catch (\AmoCRM\Exceptions\BadTypeException$e) {
-        echo "exception thrown";
-    }
-
-    return view('welcome', ['user' => 'test user']);
+    return view('welcome');
 });
 
 Route::get('/doaction', function () {
     return view('after');
 });
-
-
 
 class UserAuth implements OAuthConfigInterface
 {
@@ -89,14 +88,13 @@ class UserAuth implements OAuthConfigInterface
     public $clientSecret;
     public $redirectUri;
 
-
     public function __construct($clientId, $clientSecret, $redirectUri)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->redirectUri = $redirectUri;
     }
-        
+
     public function getIntegrationId(): string
     {
         return $this->clientId;
@@ -126,7 +124,7 @@ class UserToken implements OAuthServiceInterface
         $this->accessToken = $accessToken;
     }
 
-    public function saveOAuthToken(AccessTokenInterface $accessToken, string $baseDomain) :void
+    public function saveOAuthToken(AccessTokenInterface $accessToken, string $baseDomain): void
     {
 
         saveToken([
@@ -135,7 +133,6 @@ class UserToken implements OAuthServiceInterface
             'expires' => $accessToken->getExpires(),
             'baseDomain' => $baseDomain,
         ]);
-
 
     }
 
