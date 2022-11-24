@@ -6,21 +6,18 @@ define('TOKEN_FILE', DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'token_
 
 use AmoCRM\OAuth2\Client\Provider\AmoCRM;
 
-//include_once __DIR__ . '/vendor/autoload.php';
-// include_once __DIR__ . '/src/AmoCRM.php';
+include_once __DIR__ . '/auth2.php';
 
 session_start();
-
-
 
 /**
  * Создаем провайдера
  */
 
     $provider = new AmoCRM([
-        'clientId' => env('CLIENT_ID', "a9eaaaba-34a8-478c-adbf-0db5921627b2"),
-        'clientSecret' => env('CLIENT_SECRET', '7N10gHT6I1tMqmxcqItWAPcOI7jjvtlrPS7jbffOtVNjgs3AZjjfemwCHplExJ8s'),
-        'redirectUri' => env('REDIRECT_URI', 'https://758a-2-92-247-92.eu.ngrok.io/'),
+        'clientId' => env('CLIENT_ID', "xxx"),
+        'clientSecret' => env('CLIENT_SECRET', 'xxx'),
+        'redirectUri' => env('REDIRECT_URI', 'xxxx'),
 
     ]);
 
@@ -92,8 +89,8 @@ session_start();
         /** @var \AmoCRM\OAuth2\Client\Provider\AmoCRMResourceOwner $ownerDetails */
         $ownerDetails = $provider->getResourceOwner($accessToken);
 
-        printf('Hello, %s!', $ownerDetails->getName());
-        return $provider;
+        // printf('Hello, %s!', $ownerDetails->getName());
+        // return $provider;
         // return view('after', ['user' => 'test user' ]);
     } else {
         $accessToken = getToken();
@@ -137,57 +134,8 @@ session_start();
 
             $parsedBody = json_decode($data->getBody()->getContents(), true);
             printf('ID аккаунта - %s, название - %s', $parsedBody['id'], $parsedBody['name']);
-            return $provider;
+            // return $provider;
         } catch (GuzzleHttp\Exception\GuzzleException$e) {
             var_dump((string) $e);
         }
     }
-
-
-
-// function saveToken($accessToken)
-// {
-//     if (
-//         isset($accessToken)
-//         && isset($accessToken['accessToken'])
-//         && isset($accessToken['refreshToken'])
-//         && isset($accessToken['expires'])
-//         && isset($accessToken['baseDomain'])
-//     ) {
-//         $data = [
-//             'accessToken' => $accessToken['accessToken'],
-//             'expires' => $accessToken['expires'],
-//             'refreshToken' => $accessToken['refreshToken'],
-//             'baseDomain' => $accessToken['baseDomain'],
-//         ];
-
-//         file_put_contents(TOKEN_FILE, json_encode($data));
-//     } else {
-//         exit('Invalid access token ' . var_export($accessToken, true));
-//     }
-// }
-
-// /**
-//  * @return \League\OAuth2\Client\Token\AccessToken
-//  */
-// function getToken()
-// {
-//     $accessToken = json_decode(file_get_contents(TOKEN_FILE), true);
-
-//     if (
-//         isset($accessToken)
-//         && isset($accessToken['accessToken'])
-//         && isset($accessToken['refreshToken'])
-//         && isset($accessToken['expires'])
-//         && isset($accessToken['baseDomain'])
-//     ) {
-//         return new \League\OAuth2\Client\Token\AccessToken([
-//             'access_token' => $accessToken['accessToken'],
-//             'refresh_token' => $accessToken['refreshToken'],
-//             'expires' => $accessToken['expires'],
-//             'baseDomain' => $accessToken['baseDomain'],
-//         ]);
-//     } else {
-//         exit('Invalid access token ' . var_export($accessToken, true));
-//     }
-// }
