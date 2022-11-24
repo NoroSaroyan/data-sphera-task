@@ -21,6 +21,6 @@
         </style>
     </head>
     <body class="antialiased">
-        <h2> welcome here </h2>
+        <h2> auth success. Hello {{$user}}! </h2>
     </body>
 </html>
