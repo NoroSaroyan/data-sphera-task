@@ -26,7 +26,7 @@
 - Октрываем терминал
 - Скачать репозиторий из бранча develop
 - Зарегистрироваться на https://www.amocrm.ru/
-- Запустить ngrok на порту 80 `ngrok http 80`, пусть адрес будет https://8caa-2-92-247-92.eu.ngrok.io
+- Запустить ngrok на порту 80 `ngrok http 80 --host-header="localhost:80"`, пусть адрес будет https://8caa-2-92-247-92.eu.ngrok.io
 - Создать интеграцию с amoCrm <Публичный адрес ngrok>/app/amo/auth.php
 - Скопировать clientId, ClientSecret, redirectURI. 
 
